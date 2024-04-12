@@ -12,8 +12,28 @@ function uuidv4() {
     });
 }
 
+const mongoose = require("mongoose");
+mongoose.set("strictQuery", false);
+const mongoDB = "mongodb://127.0.0.1:27017/demo";
+mongoose.connect(mongoDB);
+const User = mongoose.model("User",{
+    name: String,
+    salt: String,
+    password: String
+});
+
+
 app.post("/salt", async(req, res)=>{
-    res.send({salt:uuidv4()});
+    const response = await User.findOne({name: req.body.username});
+    if(response){
+        res.send({salt:response.salt});
+    }else{
+        const salt = uuidv4();
+        const user = new User({username:req.body.username, salt});
+        await user.save();
+        res.send({salt});
+    }
+    
 });
 const server = app.listen(8080, ()=>{
     console.log(`listening on http://localhost:${server.address().port}`);
