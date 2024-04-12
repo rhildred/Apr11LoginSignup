@@ -41,9 +41,9 @@
         document.querySelector("form").addEventListener("submit", async(event)=>{
             event.preventDefault();
             const formData = new FormData(event.target);
-            const usernameData = new FormData();
+            const usernameData = new URLSearchParams();
             usernameData.append("username", formData.get("username"));
-            const res = await fetch("/salt", {method: "POST", body: username});
+            const res = await fetch("/salt", {method: "POST", body: usernameData});
             const sReply = await res.text();
             alert(sReply);
         });
