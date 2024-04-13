@@ -53,24 +53,28 @@ app.post("/salt", async(req, res)=>{
     
 });
 
-app.post("/loginSignup", async (req, res)=>{
+app.post("/signin", async (req, res)=>{
     const user = await User.findOne({username: req.body.username, password: req.body.password});
     if(user){
         // sign in
         req.session.username = req.body.username;
         res.send({success:true});
     }else{
-        const user = await User.findOne({username: req.body.username});
-        if(user && !user.password){
-            // new user
-            user.password = req.body.password;
-            user.save();
-            req.session.username = req.body.username;
-            res.send({success:true});
-        }
-        else{
-            res.send({success: false});
-        }
+        res.send({success: false});
+    }
+});
+
+app.post("/signup", async (req, res)=>{
+    const user = await User.findOne({username: req.body.username});
+    if(user && !user.password){
+        // new user
+        user.password = req.body.password;
+        user.save();
+        req.session.username = req.body.username;
+        res.send({success:true});
+    }
+    else{
+        res.send({success: false});
     }
 });
 
